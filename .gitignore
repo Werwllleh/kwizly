@@ -9,3 +9,12 @@
 /dataSources/
 /dataSources.local.xml
 .idea
+node_modules
+.env
+dist
+.next
+.log
+.DS_Store
+coverage
+/out
+Makefile.txt
