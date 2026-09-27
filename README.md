@@ -26,3 +26,9 @@ Kahoot-подобная платформа: ведущий создаёт кви
 - [ ] WebSocket-игровой движок
 
 ## Как запустить
+
+1. `pnpm install`
+2. `make kwizly-start` — поднимет Postgres, Redis, MinIO и port-forwarder
+3. `pnpm --filter @kwizly/api start:dev` — запустит API на http://localhost:3000/api
+
+Проверка: `curl http://localhost:3000/api/health`
