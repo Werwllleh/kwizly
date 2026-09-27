@@ -18,3 +18,11 @@ dist
 coverage
 /out
 Makefile.txt
+.agents
+.claude
+.windsurf
+
+/generated/prisma
+apps/api/prisma7.config.js
+apps/api/prisma7.config.js.map
+apps/api/prisma7.config.d.ts
