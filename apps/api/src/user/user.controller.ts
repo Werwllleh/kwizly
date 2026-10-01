@@ -24,10 +24,10 @@ export class UserController {
     return this.userService.findOne(email);
   }
 
-  @Patch(':id')
+  /*@Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
-  }
+  }*/
 
   @Delete(':id')
   remove(@Param('id') id: string) {
