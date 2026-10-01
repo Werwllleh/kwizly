@@ -6,7 +6,7 @@ import {ZodValidationPipe} from "../pipes/zod-validation-pipe";
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private userService: UserService) {}
 
   @Post()
   @UsePipes(new ZodValidationPipe(createUserSchema))
@@ -21,7 +21,7 @@ export class UserController {
 
   @Get(':email')
   findOne(@Param('email') email: string) {
-    return this.userService.findOne(email);
+    return this.userService.getUserByEmail(email);
   }
 
   /*@Patch(':id')
@@ -34,3 +34,4 @@ export class UserController {
     return this.userService.remove(+id);
   }
 }
+

@@ -10,11 +10,6 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto) {
-    const checkUser = await this.findOne(dto.email);
-    if (checkUser) {
-      throw new ConflictException('Пользователь с таким email уже существует');
-    }
-
     const user = await this.prisma.user.create({
       data: dto
     })
@@ -25,20 +20,19 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
-  async findOne(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email
-      }
-    })
-    return user;
-  }
-
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async getUserByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        email
+      }
+    })
   }
 }
