@@ -6,11 +6,12 @@
     "url": "https://github.com/Werwllleh/kwizly.git"
   },
   "scripts": {
-    "dev": "pnpm run nest-dev",
     "nest-dev": "pnpm --filter @kwizly/api start:dev",
     "nest-start": "pnpm --filter @kwizly/api start:prod",
     "nest-build": "pnpm --filter @kwizly/api build",
-    "build": "pnpm run nest-build",
+    "prisma-migrate": "pnpm --filter @kwizly/api prisma migrate dev --name",
+    "prisma-sync": "pnpm --filter @kwizly/api prisma migrate dev",
+    "prisma-generate": "pnpm --filter @kwizly/api prisma generate",
     "lint": "pnpm --filter @kwizly/api lint"
   },
   "private": true,
