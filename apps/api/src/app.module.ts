@@ -8,6 +8,8 @@ import { UserModule } from './user/user.module';
 import databaseConfig from "./config/database.config";
 import {LoggerMiddleware} from "./middlewares/logger.middleware";
 import { AuthModule } from './auth/auth.module';
+import jwtConfig from "./config/jwt.config";
+import {JwtAuthGuard} from "./auth/jwt-auth.guard";
 
 const validationSchema = z.object({
   DATABASE_URL: z.string().min(1),
@@ -15,12 +17,12 @@ const validationSchema = z.object({
 
 @Module({
   controllers: [],
-  providers: [],
+  providers: [JwtAuthGuard],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: validationSchema,
-      load: [databaseConfig],
+      load: [databaseConfig, jwtConfig],
       envFilePath: resolve(__dirname, '../../../.env'),
     }),
     PrismaModule,
