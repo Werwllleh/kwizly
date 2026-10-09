@@ -1,6 +1,9 @@
 import fs from "fs";
 import {LOGGER_DIR} from "./constants";
 import {join} from "node:path";
+import {WriteLogInfoType} from "./types";
+import bcrypt from 'bcryptjs';
+import crypto from 'node:crypto';
 
 export const createDir = async (path: string): Promise<void> => {
   try {
@@ -28,13 +31,6 @@ export const formatDateTime = (date: Date): string => {
   return `${datePart} ${hours}:${minutes}:${seconds}`;
 };
 
-type WriteLogInfoType = {
-  url: string,
-  method: string,
-  statusCode: number,
-  duration: number
-}
-
 export const writeLog = async (date: Date, info: WriteLogInfoType): Promise<void> => {
   const filename = `${formatDate(date)}.log`;
   const filepath = join(LOGGER_DIR, filename);
@@ -43,4 +39,20 @@ export const writeLog = async (date: Date, info: WriteLogInfoType): Promise<void
     filepath,
     `${formatDateTime(date)} | ${info.method} | ${info.url} | ${info.statusCode} | ${info.duration}ms\n`
   );
+}
+
+export const hashPassword = (password: string): Promise<string> => {
+  return bcrypt.hash(password, 10);
+}
+
+export const comparePassword = (password: string, hash: string): Promise<boolean> => {
+  return bcrypt.compare(password, hash);
+}
+
+export const hashToken = (token: string): string => {
+  return crypto.createHash('sha256').update(token).digest('hex');
+};
+
+export const createToken = (): string => {
+  return crypto.randomUUID();
 }

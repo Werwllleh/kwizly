@@ -1,24 +1,23 @@
 import {ConflictException, HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
 import {AuthDto} from "./dto/auth.dto";
 import {UserService} from "../user/user.service";
-import {JwtService} from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import {CreateUserDto} from "../user/dto/create-user.dto";
-import {UserModel} from "../generated/prisma/models/User";
-import {TUser} from "../common/types";
+import {TSessionTokens, TUser} from "../common/types";
+import {SessionService} from "./session.service";
 
 @Injectable()
 export class AuthService {
 
-  constructor(private userService: UserService, private jwtService: JwtService) {
+  constructor(private userService: UserService, private sessionService: SessionService) {
   }
 
-  async login(dto: AuthDto): Promise<{ token: string }> {
+  async login(dto: AuthDto): Promise<TSessionTokens> {
     const user = await this.validateUser(dto);
-    return this.generateToken(user);
+    return this.sessionService.createSession(user.id);
   }
 
-  async register(dto: CreateUserDto): Promise<{ token: string }> {
+  async register(dto: CreateUserDto): Promise<TSessionTokens> {
     const candidate = await this.userService.getUserByEmail(dto.email);
 
     if (candidate) {
@@ -28,7 +27,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(dto.password, 5);
     const user = await this.userService.create({...dto, password: hashedPassword})
 
-    return this.generateToken(user);
+    return this.sessionService.createSession(user.id);
   }
 
   async me(email: string): Promise<{ user: TUser | null }> {
@@ -37,19 +36,6 @@ export class AuthService {
 
     return {
       user: data
-    }
-  }
-
-  private async generateToken(user: UserModel) {
-
-    const payload = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    }
-
-    return {
-      token: this.jwtService.sign(payload),
     }
   }
 
