@@ -26,3 +26,6 @@ Makefile.txt
 apps/api/prisma7.config.js
 apps/api/prisma7.config.js.map
 apps/api/prisma7.config.d.ts
+
+/prisma/apps/api/src/generated/prisma
+apps/api/tsconfig.tsbuildinfo
