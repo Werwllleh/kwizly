@@ -16,7 +16,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "add-c": "nest g controller",
-    "add-p": "nest g service",
+    "add-s": "nest g service",
     "add-m": "nest g module"
   }
 }

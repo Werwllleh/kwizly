@@ -10,13 +10,13 @@ import {LoggerMiddleware} from "./middlewares/logger.middleware";
 import { AuthModule } from './auth/auth.module';
 import jwtConfig from "./config/jwt.config";
 import {JwtAuthGuard} from "./auth/jwt-auth.guard";
+import { QuizModule } from './quiz/quiz.module';
 
 const validationSchema = z.object({
   DATABASE_URL: z.string().min(1),
 })
 
 @Module({
-  controllers: [],
   providers: [JwtAuthGuard],
   imports: [
     ConfigModule.forRoot({
@@ -29,6 +29,7 @@ const validationSchema = z.object({
     HealthModule,
     UserModule,
     AuthModule,
+    QuizModule,
   ],
 })
 
