@@ -24,8 +24,8 @@ services:
       - |
         socat tcp-listen:5432,fork,reuseaddr tcp-connect:kwizly-postgres:5432 &
         socat tcp-listen:6379,fork,reuseaddr tcp-connect:kwizly-redis:6379 &
-        socat tcp-listen:9000,fork,reuseaddr tcp-connect:kwizly-minio-container:9000 &
-        socat tcp-listen:9001,fork,reuseaddr tcp-connect:kwizly-minio-container:9001 &
+        socat tcp-listen:9000,fork,reuseaddr tcp-connect:kwizly-seaweedfs-container:8333 &
+        socat tcp-listen:9001,fork,reuseaddr tcp-connect:kwizly-seaweedfs-container:8888 &
         wait
     ports:
       - "127.0.0.1:25432:5432"
@@ -37,7 +37,7 @@ services:
         condition: service_healthy
       kwizly-redis:
         condition: service_healthy
-      kwizly-minio:
+      kwizly-seaweedfs:
         condition: service_healthy
     restart: always
 
@@ -51,17 +51,18 @@ services:
       retries: 5
     restart: always
 
-  kwizly-minio:
-    image: cgr.dev/chainguard/minio:latest-dev
-    container_name: kwizly-minio-container
-    command: server /data --console-address ":9001"
+  kwizly-seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: kwizly-seaweedfs-container
+    command: "mini -dir=/data"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      - AWS_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+      - S3_BUCKET=${S3_BUCKET}
     volumes:
-      - ${PROJECT_ROOT}/out/minio_data:/data
+      - ${PROJECT_ROOT}/out/seaweedfs_data:/data
     healthcheck:
-      test: [ "CMD", "mc", "ready", "local" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8333/" ]
       interval: 10s
       timeout: 5s
       retries: 5

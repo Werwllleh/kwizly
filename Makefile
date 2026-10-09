@@ -25,14 +25,14 @@ redis-up:
 redis-down:
 	@docker compose down kwizly-redis
 
-minio-up:
-	@docker compose up -d kwizly-minio
+s3-up:
+	@docker compose up -d kwizly-seaweedfs
 
-minio-down:
-	@docker compose down kwizly-minio
+s3-down:
+	@docker compose down kwizly-seaweedfs
 
 kwizly-start:
-	@docker compose up -d kwizly-postgres kwizly-redis kwizly-minio port-forwarder
+	@docker compose up -d kwizly-postgres kwizly-redis kwizly-seaweedfs port-forwarder
 
 kwizly-stop:
-	@docker compose down kwizly-postgres kwizly-redis kwizly-minio port-forwarder
+	@docker compose down kwizly-postgres kwizly-redis kwizly-seaweedfs port-forwarder

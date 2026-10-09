@@ -20,6 +20,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   sessions  Session[]
+  quizzes   Quiz[]
 }
 
 model Session {
@@ -31,4 +32,39 @@ model Session {
   createdAt   DateTime @default(now())
   userAgent   String?
   ip          String?
+}
+
+model Quiz {
+  id          String     @id @default(uuid())
+  authorId    String
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  artwork     String
+  isPublished Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+  questions   Question[]
+}
+
+model Question {
+  id        String   @id @default(uuid())
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text      String
+  order     Int
+  timeLimit Int      @default(60)
+  points    Int      @default(10)
+  mediaUrl  String?
+  options   Option[]
+}
+
+model Option {
+  id         String   @id @default(uuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean  @default(false)
+  mediaUrl   String?
+  order      Int
 }
