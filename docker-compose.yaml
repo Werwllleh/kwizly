@@ -62,7 +62,7 @@ services:
     volumes:
       - ${PROJECT_ROOT}/out/seaweedfs_data:/data
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8333/" ]
+      test: ["CMD", "curl", "-f", "http://localhost:9333/cluster/status"]
       interval: 10s
       timeout: 5s
       retries: 5
