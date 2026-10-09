@@ -44,16 +44,32 @@
 - [x] Guard и Decorators для защиты эндпоинтов (`JwtAuthGuard`, `@CurrentUser()`).
 - [x] Эндпоинты аутентификации: `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/me`.
 
-## Текущее задание:
 ### Фаза 3 — Управление квизами (Quiz CRUD)
-1. **Проектирование схемы моделей в Prisma (`apps/api/prisma/schema.prisma`)**:
-   - Модель `Quiz`: связь с `User` (`authorId`), поля `title`, `description`, `isPublished`, `coverUrl`, `createdAt`, `updatedAt`, связь с `Question[]`.
-   - Модель `Question`: связь с `Quiz` (`quizId`, каскадное удаление), поля `text`, `order`, `timeLimit`, `points`, `mediaUrl`, связь с `Option[]`.
-   - Модель `Option`: связь с `Question` (`questionId`, каскадное удаление), поля `text`, `isCorrect`, `order`.
-   - Обратная связь `quizzes Quiz[]` в модели `User`.
-2. **Создание и применение миграции Prisma**:
-   - `pnpm prisma-migrate quiz_models`
-   - `pnpm prisma-generate`
+- [x] **Проектирование схемы моделей в Prisma (`apps/api/prisma/schema.prisma`)**:
+  - Модель `Quiz`: связь с `User` (`authorId`), поля `title`, `description`, `artwork`, `isPublished`, `createdAt`, `updatedAt`, связь с `Question[]`.
+  - Модель `Question`: связь с `Quiz` (`quizId`, каскадное удаление), поля `text`, `order`, `timeLimit`, `points`, `mediaUrl`, связь с `Option[]`.
+  - Модель `Option`: связь с `Question` (`questionId`, каскадное удаление), поля `text`, `isCorrect`, `mediaUrl`, `order`.
+  - Обратная связь `quizzes Quiz[]` в модели `User`.
+- [x] **Создание и применение миграции Prisma**:
+  - Миграция `20261009195023_quiz_models` успешно применена.
+  - Клиент Prisma обновлен (`pnpm prisma-generate`).
+
+## Текущее задание:
+### Фаза 3 — Разработка модуля Quiz в NestJS
+1. **Генерация и структура модуля**:
+   - Создание папки `apps/api/src/quiz` с файлами `quiz.module.ts`, `quiz.controller.ts`, `quiz.service.ts`.
+   - Регистрация `QuizModule` в `AppModule`.
+2. **Проектирование схем валидации и DTO (Zod)**:
+   - `CreateQuizDto`: заголовок, описание, обложка (`artwork`), статус публикации, вложенные вопросы и варианты ответов (или поэтапное создание).
+   - `UpdateQuizDto`: частичное обновление квиза.
+3. **Реализация сервиса `QuizService`**:
+   - `create`: создание квиза с привязкой к `authorId`.
+   - `findAll`: получение опубликованных квизов + квизов текущего пользователя.
+   - `findOne`: получение квиза по ID с вопросами и вариантами ответов.
+   - `update` / `delete`: изменение и удаление квиза строго с проверкой авторства (`ForbiddenException` при попытке изменить чужой квиз).
+4. **Реализация контроллера `QuizController`**:
+   - Защита эндпоинтов с помощью `@UseGuards(JwtAuthGuard)`.
+   - Использование `@CurrentUser()` для получения ID автора.
 
 ## План дальнейшего развития (Roadmap)
 1. **Аутентификация**: Реализация JWT токенов, защитных guard-ов, сессий в БД, эндпоинтов регистрации и входа.

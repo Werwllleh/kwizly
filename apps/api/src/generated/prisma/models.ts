@@ -10,4 +10,7 @@
  */
 export type * from './models/User'
 export type * from './models/Session'
+export type * from './models/Quiz'
+export type * from './models/Question'
+export type * from './models/Option'
 export type * from './commonInputTypes'
