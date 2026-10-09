@@ -1,4 +1,5 @@
-import {Body, Controller, Cookies, Get, Post, UseGuards, UsePipes} from '@nestjs/common';
+import {Body, Controller, Get, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
+import {Request, Response} from 'express';
 import {AuthService} from "./auth.service";
 import {ZodValidationPipe} from "../pipes/zod-validation-pipe";
 import {AuthDto, authSchema} from "./dto/auth.dto";
@@ -15,30 +16,68 @@ export class AuthController {
 
   @Post('/login')
   @UsePipes(new ZodValidationPipe(authSchema))
-  login(@Body() dto: AuthDto) {
-    return this.authService.login(dto)
+  async login(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const tokens = await this.authService.login(dto);
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
+    return { access_token: tokens.access_token };
   }
 
   @Post('/register')
   @UsePipes(new ZodValidationPipe(createUserSchema))
-  register(@Body() dto: CreateUserDto) {
-    return this.authService.register(dto)
+  async register(
+    @Body() dto: CreateUserDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const tokens = await this.authService.register(dto);
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
+    return { access_token: tokens.access_token };
   }
 
   @Get('/me')
   @UseGuards(JwtAuthGuard)
-  me(@CurrentUser() user: {email: string}) {
+  me(@CurrentUser() user: { email: string }) {
     return this.authService.me(user.email);
   }
 
   @Post('/refresh')
-  refresh(@Body('refreshToken') refreshToken: string) {
-    return this.sessionService.updateRefreshToken(refreshToken)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Body('refreshToken') bodyToken?: string
+  ) {
+    const refreshToken = req.cookies?.refreshToken || bodyToken;
+    const tokens = await this.sessionService.updateRefreshToken(refreshToken);
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
+    return { access_token: tokens.access_token };
   }
 
   @Post('/logout')
-  logout(@Body('refreshToken') refreshToken: string) {
-    return this.sessionService.logout(refreshToken)
+  async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Body('refreshToken') bodyToken?: string
+  ): Promise<{ success: boolean }> {
+    const refreshToken = req.cookies?.refreshToken || bodyToken;
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      sameSite: 'lax',
+    });
+    if (!refreshToken) {
+      return { success: true };
+    }
+    return this.sessionService.logout(refreshToken);
+  }
+
+  private setRefreshTokenCookie(res: Response, token: string) {
+    res.cookie('refreshToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+    });
   }
 
 }

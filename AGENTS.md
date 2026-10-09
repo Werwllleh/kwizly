@@ -44,9 +44,16 @@
 - [x] Guard и Decorators для защиты эндпоинтов (`JwtAuthGuard`, `@CurrentUser()`).
 - [x] Эндпоинты аутентификации: `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/me`.
 
-## В работе:
-Фаза 2 (Аутентификация и сессии) завершена!
-Следующий этап: Проверка работоспособности авторизации и переход к Фазе 3 (Управление квизами / Quiz CRUD).
+## Текущее задание:
+### Фаза 3 — Управление квизами (Quiz CRUD)
+1. **Проектирование схемы моделей в Prisma (`apps/api/prisma/schema.prisma`)**:
+   - Модель `Quiz`: связь с `User` (`authorId`), поля `title`, `description`, `isPublished`, `coverUrl`, `createdAt`, `updatedAt`, связь с `Question[]`.
+   - Модель `Question`: связь с `Quiz` (`quizId`, каскадное удаление), поля `text`, `order`, `timeLimit`, `points`, `mediaUrl`, связь с `Option[]`.
+   - Модель `Option`: связь с `Question` (`questionId`, каскадное удаление), поля `text`, `isCorrect`, `order`.
+   - Обратная связь `quizzes Quiz[]` в модели `User`.
+2. **Создание и применение миграции Prisma**:
+   - `pnpm prisma-migrate quiz_models`
+   - `pnpm prisma-generate`
 
 ## План дальнейшего развития (Roadmap)
 1. **Аутентификация**: Реализация JWT токенов, защитных guard-ов, сессий в БД, эндпоинтов регистрации и входа.

@@ -16,12 +16,15 @@ export class SessionService {
               private jwtService: JwtService,
               private userService: UserService) {}
 
-  async updateRefreshToken(refreshToken: string): Promise<TSessionTokens> {
+  async updateRefreshToken(refreshToken?: string): Promise<TSessionTokens> {
+    if (!refreshToken) {
+      throw new UnauthorizedException({ message: 'Сессия не найдена' });
+    }
 
     const session = await this.getUserSession(refreshToken);
 
     if (!session) {
-      throw new UnauthorizedException({message: 'Сессия не найдена'})
+      throw new UnauthorizedException({ message: 'Сессия не найдена' });
     }
 
     if (session.expiresAt < new Date()) {
@@ -61,19 +64,25 @@ export class SessionService {
     return tokens;
   }
 
-  async logout(refreshToken: string): Promise<SessionModel | null> {
+  async logout(refreshToken: string): Promise<{ success: boolean }> {
 
     const session = await this.getUserSession(refreshToken);
 
     if (!session) {
-      return null
+      return {
+        success: false
+      }
     }
 
-    return await this.prisma.session.delete({
+    await this.prisma.session.delete({
       where: {
         id: session.id
       }
     })
+
+    return {
+      success: true
+    }
   }
 
   private async getUserSession(refreshToken: string): Promise<SessionModel | null> {
