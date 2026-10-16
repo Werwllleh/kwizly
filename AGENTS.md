@@ -53,37 +53,21 @@
 - [x] **Создание и применение миграции Prisma**:
   - Миграция `20261009195023_quiz_models` успешно применена.
   - Клиент Prisma обновлен (`pnpm prisma-generate`).
+- [x] **Разработка модуля Quiz в NestJS**:
+  - Схемы валидации и DTO (Zod) для квизов, вопросов и вариантов ответа с кастомной валидацией `.refine()`.
+  - Бизнес-логика в `QuizService`: CRUD квизов, каскадное создание и обновление вопросов/ответов, проверка владения ресурсами (`checkQuizOwnership`).
+  - Контроллер `QuizController` с защитой через `JwtAuthGuard` и декоратором `@CurrentUser()`.
+  - Доработка `ZodValidationPipe` с фильтрацией `metadata.type === 'body'` и подробными ошибками валидации.
+  - Успешное сквозное тестирование в Postman (регистрация, авторизация, создание квиза).
 
 ## Текущее задание:
-### Фаза 3 — Разработка модуля Quiz в NestJS
-#### Этап 1: CRUD самого квиза (карточки и метаданные)
-- [x] **Структура модуля**:
-  - Каталог `apps/api/src/quiz` с файлами `quiz.module.ts`, `quiz.controller.ts`, `quiz.service.ts`.
-  - `QuizModule` зарегистрирован в `AppModule`.
-- [x] **Схемы валидации и DTO (Zod)** в `apps/api/src/quiz/dto/quiz.dto.ts`:
-  - `createQuizSchema` / `updateQuizSchema`, типы `QuizCreateDto`, `QuizUpdateDto`.
-- [x] **Бизнес-логика `QuizService`**:
-  - `create(authorId, dto)`: создание квиза с привязкой к автору.
-  - `findAll(userId, query)`: каталог опубликованных квизов (`isPublished: true`) + личные квизы автора.
-  - `findOne(id, userId)`: получение квиза по ID (если черновик — доступен только автору).
-  - `update(id, userId, dto)`: обновление квиза с обязательной проверкой прав автора (`ForbiddenException`).
-  - `delete(id, userId)`: удаление квиза с проверкой прав автора.
-- [x] **Контроллер `QuizController`**:
-  - Защита эндпоинтов через `@UseGuards(JwtAuthGuard)`.
-  - Извлечение данных пользователя через `@CurrentUser()`.
-  - Маршруты: `POST /quizzes`, `GET /quizzes`, `GET /quizzes/:id`, `PATCH /quizzes/:id`, `DELETE /quizzes/:id`.
-
-#### Этап 2: Гранулярное управление вопросами и ответами
-- [x] Схемы валидации и DTO вопросов и вариантов ответов (`createQuestionSchema`, `updateQuestionSchema`).
-- [x] Логика вопросов в `QuizService`:
-  - `addQuestion`: вложенное создание вопроса и вариантов (`nested create`).
-  - `updateQuestion`: обновление вопроса и вариантов.
-  - `deleteQuestion`: каскадное удаление вопроса с проверкой принадлежности к квизу.
-  - Обогащение `findOne` вопросами и вариантами (`include`).
-- [x] Эндпоинты в `QuizController`:
-  - `POST /quizzes/:id/questions` (добавление вопроса).
-  - `PATCH /quizzes/:id/questions/:questionId` (редактирование вопроса).
-  - `DELETE /quizzes/:id/questions/:questionId` (удаление вопроса).
+### Фаза 4 — WebSocket игровой движок (Real-time Game Engine)
+#### Этап 1: Архитектура игровых сессий и WebSocket Gateway в NestJS
+- [x] Установка пакетов `@nestjs/websockets`, `@nestjs/platform-socket.io` и `socket.io`.
+- [ ] Исследование и проектирование структуры игрового состояния в памяти (Redis / Memory Store).
+- [ ] Создание модуля `GameModule` и базового шлюза `GameGateway`.
+- [ ] Механизм генерации коротких PIN-кодов комнат (например, 6-значный код: `123456`).
+- [ ] Подключение хоста (создание игровой комнаты) и подключение игроков (join room).
 
 ## План дальнейшего развития (Roadmap)
 1. **Аутентификация**: Реализация JWT токенов, защитных guard-ов, сессий в БД, эндпоинтов регистрации и входа.

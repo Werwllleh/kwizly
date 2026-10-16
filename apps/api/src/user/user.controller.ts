@@ -8,11 +8,11 @@ import {ZodValidationPipe} from "../pipes/zod-validation-pipe";
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post()
+  /*@Post()
   @UsePipes(new ZodValidationPipe(createUserSchema))
   create(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
-  }
+  }*/
 
   @Get()
   findAll() {
@@ -29,9 +29,9 @@ export class UserController {
     return this.userService.update(+id, updateUserDto);
   }*/
 
-  @Delete(':id')
+  /*@Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
-  }
+  }*/
 }
 
