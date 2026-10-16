@@ -62,18 +62,28 @@
   - `QuizModule` зарегистрирован в `AppModule`.
 - [x] **Схемы валидации и DTO (Zod)** в `apps/api/src/quiz/dto/quiz.dto.ts`:
   - `createQuizSchema` / `updateQuizSchema`, типы `QuizCreateDto`, `QuizUpdateDto`.
-3. **Бизнес-логика `QuizService`**:
+- [x] **Бизнес-логика `QuizService`**:
   - `create(authorId, dto)`: создание квиза с привязкой к автору.
   - `findAll(userId, query)`: каталог опубликованных квизов (`isPublished: true`) + личные квизы автора.
   - `findOne(id, userId)`: получение квиза по ID (если черновик — доступен только автору).
   - `update(id, userId, dto)`: обновление квиза с обязательной проверкой прав автора (`ForbiddenException`).
   - `delete(id, userId)`: удаление квиза с проверкой прав автора.
-4. **Контроллер `QuizController`**:
+- [x] **Контроллер `QuizController`**:
   - Защита эндпоинтов через `@UseGuards(JwtAuthGuard)`.
   - Извлечение данных пользователя через `@CurrentUser()`.
+  - Маршруты: `POST /quizzes`, `GET /quizzes`, `GET /quizzes/:id`, `PATCH /quizzes/:id`, `DELETE /quizzes/:id`.
 
 #### Этап 2: Гранулярное управление вопросами и ответами
-- Эндпоинты `/quizzes/:id/questions` (добавление, обновление, удаление вопросов и вариантов с каскадным контролем порядка `order`).
+- [x] Схемы валидации и DTO вопросов и вариантов ответов (`createQuestionSchema`, `updateQuestionSchema`).
+- [x] Логика вопросов в `QuizService`:
+  - `addQuestion`: вложенное создание вопроса и вариантов (`nested create`).
+  - `updateQuestion`: обновление вопроса и вариантов.
+  - `deleteQuestion`: каскадное удаление вопроса с проверкой принадлежности к квизу.
+  - Обогащение `findOne` вопросами и вариантами (`include`).
+- [x] Эндпоинты в `QuizController`:
+  - `POST /quizzes/:id/questions` (добавление вопроса).
+  - `PATCH /quizzes/:id/questions/:questionId` (редактирование вопроса).
+  - `DELETE /quizzes/:id/questions/:questionId` (удаление вопроса).
 
 ## План дальнейшего развития (Roadmap)
 1. **Аутентификация**: Реализация JWT токенов, защитных guard-ов, сессий в БД, эндпоинтов регистрации и входа.
