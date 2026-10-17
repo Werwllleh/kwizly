@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import jwtConfig from "./config/jwt.config";
 import {JwtAuthGuard} from "./auth/jwt-auth.guard";
 import { QuizModule } from './quiz/quiz.module';
+import {RedisModule} from "./redis/redis.module";
 
 const validationSchema = z.object({
   DATABASE_URL: z.string().min(1),
@@ -30,6 +31,7 @@ const validationSchema = z.object({
     UserModule,
     AuthModule,
     QuizModule,
+    RedisModule
   ],
 })
 

@@ -64,10 +64,13 @@
 ### Фаза 4 — WebSocket игровой движок (Real-time Game Engine)
 #### Этап 1: Архитектура игровых сессий и WebSocket Gateway в NestJS
 - [x] Установка пакетов `@nestjs/websockets`, `@nestjs/platform-socket.io` и `socket.io`.
-- [ ] Исследование и проектирование структуры игрового состояния в памяти (Redis / Memory Store).
-- [ ] Создание модуля `GameModule` и базового шлюза `GameGateway`.
-- [ ] Механизм генерации коротких PIN-кодов комнат (например, 6-значный код: `123456`).
-- [ ] Подключение хоста (создание игровой комнаты) и подключение игроков (join room).
+- [x] Интеграция Redis клиента (`ioredis`) для хранения игровых сессий в памяти Redis (`127.0.0.1:26379`):
+  - Реализован `RedisService` с хуком `OnModuleDestroy` и базовыми операциями (`get`, `set`, `del`).
+  - Создан глобальный модуль `RedisModule` и зарегистрирован в `AppModule`.
+- [x] Исследование и проектирование структуры игрового состояния в Redis:
+  - В `apps/api/src/game/game.types.ts` описаны `GameStatus`, `TPlayer` и `TGameSession` с поддержкой опционального PIN-кода.
+- [ ] Создание модуля `GameModule` и сервиса `GameService` (генерация короткого `roomId`, методы `createRoom` и `joinRoom` с поддержкой опционального PIN).
+- [ ] Создание шлюза `GameGateway` и обработка событий WebSocket (`create_room`, `join_room`, `handleDisconnect`).
 
 ## План дальнейшего развития (Roadmap)
 1. **Аутентификация**: Реализация JWT токенов, защитных guard-ов, сессий в БД, эндпоинтов регистрации и входа.
